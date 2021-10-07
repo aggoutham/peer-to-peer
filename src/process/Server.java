@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
+import org.json.JSONObject;
+
 import peer.Peer;
 
 public class Server extends Thread{
@@ -36,7 +38,6 @@ public class Server extends Thread{
 			while(true) {
 				socket = listener.accept();
 				byte[] message = receiveMessage();
-				System.out.println(message);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -50,10 +51,14 @@ public class Server extends Thread{
 		try {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			message = (byte[]) in.readObject();
-			System.out.println("Received message");
+//			System.out.println("Peer Received message");
 			String str = new String(message, StandardCharsets.UTF_8);
-			System.out.println(str);
-			System.out.println("Printed message");
+//			System.out.println(str);
+//			System.out.println("Peer Printed message");
+			
+			String respond = processMessage(str);
+			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+			out.writeObject(respond.getBytes());
 		} 
 
 		catch (Exception e) {
@@ -61,6 +66,32 @@ public class Server extends Thread{
 //			System.exit(0);
 		}
 		return message;
+	}
+	
+	private String processMessage(String messageStr) {
+		String respond = "Nothing to process";
+		try {
+			JSONObject mObj = new JSONObject(messageStr);
+			String operation = mObj.getString("Operation");
+			String authToken = mObj.getString("Authorization");
+			if(authToken.equals(configMap.get("authToken"))) {
+				//Simulating Authentication
+				if(operation.equals("Healthcheck")){
+					JSONObject resObj = new JSONObject();
+					resObj.put("status", "1");
+					return resObj.toString();
+				}
+				else {
+					return "Invalid Operation. Please Check the request object and try again";
+				}
+				
+			}
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+		return respond;
+		
 	}
 
 }
