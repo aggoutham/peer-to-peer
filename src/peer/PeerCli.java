@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import org.json.JSONObject;
+
 import message.SendMessage;
 
 public class PeerCli  {
@@ -34,7 +36,7 @@ public class PeerCli  {
             System.out.println("Choose from the following options :- ");
             
             System.out.println("1. Register yourself with server");
-            System.out.println("2. List the files you have");
+            System.out.println("2. List the peers you have");
             System.out.println("3. List all the files in the distributed system");
             System.out.println("4. Find a particular file's location");
             System.out.println("5. Details of THIS peer \n");
@@ -60,18 +62,19 @@ public class PeerCli  {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-            	System.out.println("All the files in the system :- ");
-            	ArrayList<String> filenames = new ArrayList<String> ();
+    			
+    			JSONObject reqObj = new JSONObject();
+    			reqObj.put("Authorization",configMap.get("authToken"));
+    			reqObj.put("Operation", "GetPeers");
+    			
             	SendMessage sm = new SendMessage();
-				String messageStr = "Trying Option 2 from CLI";
+				String messageStr = reqObj.toString();
+				System.out.println("REQUEST: " + messageStr);
 				byte[] message = messageStr.getBytes();
-            	sm.sendReq(csSocket, message);
-            	
-            	for(int i=0; i<filenames.size(); i++) {
-            		System.out.println("File " + i + ": " + filenames.get(i));
-            	}
-            	
-            	
+				
+            	String response = sm.sendReq(csSocket, message);
+            	System.out.println("RESPONSE: " + response);
+
             }
             
 

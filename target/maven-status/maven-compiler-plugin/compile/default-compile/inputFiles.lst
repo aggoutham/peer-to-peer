@@ -6,4 +6,5 @@
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/peer/StartPeer.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/peer/PeerCli.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/process/Server.java
+/Users/aggoutham/eclipse-workspace/peer-to-peer/src/message/RegisterPeer.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/message/SendMessage.java

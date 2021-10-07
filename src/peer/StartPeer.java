@@ -3,6 +3,7 @@ package peer;
 import java.io.IOException;
 import java.util.HashMap;
 
+import message.RegisterPeer;
 import process.Client;
 import process.Server;
 import utils.Config;
@@ -32,19 +33,20 @@ public class StartPeer {
 			e.printStackTrace();
 		}
 	    System.out.println("Starting Peer with the following configurations");
+	    System.out.println("#####################################################");
 		for (String key: configMap.keySet()) {
 		    String value = configMap.get(key);
 		    System.out.println(key + " " + value);
 		}
+	    System.out.println("#####################################################");
 		peerProcess.peerId =  Integer.parseInt(configMap.get("peerID"));
 		peerProcess.port = Integer.parseInt(configMap.get("peerListeningPort"));
 		
 		
 		
 		//Before Starting, first register with Central Server.
-		
-		
-		
+		RegisterPeer r = new RegisterPeer(peerProcess.p,configMap);
+		r.register();
 		
 		
 		

@@ -4,6 +4,7 @@ peer/Peer.class
 peer/PeerCli.class
 process/Client.class
 peer/StartPeer.class
+message/RegisterPeer.class
 process/Server.class
 centralServer/ServerListener.class
 utils/Config.class
