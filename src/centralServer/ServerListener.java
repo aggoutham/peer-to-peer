@@ -17,11 +17,12 @@ public class ServerListener extends Thread {
 	private int listenPort;
 	private Socket socket;
 	private HashMap<String,String> configMap;
-	private HashMap<String,Peer> registeredPeers = new HashMap<String,Peer> ();
+	private HashMap<String,Peer> registeredPeers;
 	
-	public ServerListener(int listenPort, HashMap <String,String> configMap, StartCentral centralServer) {
+	public ServerListener(int listenPort, HashMap <String,String> configMap, HashMap<String,Peer> rp) {
 		this.listenPort = listenPort;
 		this.configMap = configMap;
+		this.registeredPeers = rp;
 	}
 	
 	
@@ -80,6 +81,7 @@ public class ServerListener extends Thread {
 					np.setId(peerID);
 					np.setIP(peerIP);
 					np.setPort(peerPort);
+					
 					registeredPeers.put(mObj.getString("peerID"), np);
 					respond = "Added the peer in my data structure successfully";
 					return respond;

@@ -7,4 +7,5 @@ peer/StartPeer.class
 message/RegisterPeer.class
 process/Server.class
 centralServer/ServerListener.class
+centralServer/Healthcheck.class
 utils/Config.class
