@@ -45,8 +45,8 @@ public class StartCentral {
 		cs.start();
 		
 		//Spawn the Healthcheck Thread
-		Healthcheck hc = new Healthcheck(registeredPeers,configMap);
-		hc.start();
+//		Healthcheck hc = new Healthcheck(registeredPeers,configMap);
+//		hc.start();
 		
 			
 	}

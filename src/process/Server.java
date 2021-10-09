@@ -1,4 +1,7 @@
 package process;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -57,8 +60,13 @@ public class Server extends Thread{
 //			System.out.println("Peer Printed message");
 			
 			String respond = processMessage(str);
+			System.out.println("Created new string for response");
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+
+			System.out.println("Opened output stream");
 			out.writeObject(respond.getBytes());
+
+			System.out.println("Sent the file");
 		} 
 
 		catch (Exception e) {
@@ -81,12 +89,28 @@ public class Server extends Thread{
 					resObj.put("status", "1");
 					return resObj.toString();
 				}
-				else if(operation.equals("DownloadRequest")) {
-					System.out.println("Some peer requested for download");
+				else if(operation.equals("DownloadChunk")) {
+					System.out.println("Some peer requested for chunk :-");
 					//Send the chunk to the peer who is requesting
+					String fileFolder = mObj.getString("FileFolder");
+					String fileChunk = mObj.getString("FileChunk");
 					
+					System.out.println(fileFolder + " " + fileChunk);
+					//SEND CHUNK IF YOU HAVE
 					
-					return "Done";
+					String data_directory = configMap.get("data_directory");
+					File chunk = new File(data_directory + fileFolder + "/" + fileChunk);
+					byte [] mybytearray = new byte[(int)chunk.length()];
+					FileInputStream fis = new FileInputStream(chunk);
+					BufferedInputStream bis = new BufferedInputStream(fis);
+					
+					System.out.println("Created new buffer input stream");
+					bis.read(mybytearray,0,mybytearray.length);
+					String responseFile = new String(mybytearray,StandardCharsets.UTF_8);
+					bis.close();
+					System.out.println("Created new string for response");
+					
+					return responseFile;
 					//
 					
 				}

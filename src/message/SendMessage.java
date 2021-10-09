@@ -21,11 +21,15 @@ public class SendMessage {
 			resp = (byte[]) in.readObject();
 			String str = new String(resp, StandardCharsets.UTF_8);
 			return str;
-		} catch (IOException e) {
-			System.err.println(e);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} 
+//		catch (IOException e) {
+//			System.err.println(e);
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
+		catch (Exception e) {
+			System.out.println(e);
 		}
 		return response;
 	}

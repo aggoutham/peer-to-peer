@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import org.json.JSONObject;
 
+import downloads.DownloadChunk;
 import message.SendMessage;
 
 public class PeerCli  {
@@ -133,7 +134,11 @@ public class PeerCli  {
             	System.out.println("RESPONSE: " + response);
 
             }
-            
+            else if(option.equals("5")) {
+            	DownloadChunk dc = new DownloadChunk();
+            	dc.beginDownload("", "");
+
+            }
 
         	System.out.println("");
         	System.out.println("#### END ####");

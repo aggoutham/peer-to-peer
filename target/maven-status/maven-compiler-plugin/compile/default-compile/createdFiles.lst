@@ -2,6 +2,7 @@ message/SendMessage.class
 centralServer/StartCentral.class
 peer/Peer.class
 peer/PopulateFiles.class
+downloads/DownloadChunk.class
 process/Client.class
 message/RegisterPeer.class
 process/Server.class
