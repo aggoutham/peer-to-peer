@@ -81,6 +81,15 @@ public class Server extends Thread{
 					resObj.put("status", "1");
 					return resObj.toString();
 				}
+				else if(operation.equals("DownloadRequest")) {
+					System.out.println("Some peer requested for download");
+					//Send the chunk to the peer who is requesting
+					
+					
+					return "Done";
+					//
+					
+				}
 				else {
 					return "Invalid Operation. Please Check the request object and try again";
 				}

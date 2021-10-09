@@ -33,26 +33,28 @@ public class PeerCli  {
 		System.out.println("####Welcome to Peer Interactive Shell####");
         System.out.println("Choose from the following options :- ");
         
-        System.out.println("1. Register yourself with server");
-        System.out.println("2. List the peers you have");
-        System.out.println("3. List all the files in the distributed system");
-        System.out.println("4. Find a particular file's location");
-        System.out.println("5. Details of THIS peer \n");
+//        System.out.println("1. Register yourself with server");
+        System.out.println("1. List the peers you have");
+        System.out.println("2. List all the files in the distributed system");
+        System.out.println("3. Find a particular file's location");
+        System.out.println("4. Details of THIS peer");
+        System.out.println("5. Download a File from the system \n");
 		 
 		while(true) {
-            
+
+	        System.out.println("Please Enter your new Option :- ");
             Scanner userInput = new Scanner(System.in);
             String option = "";
             option = userInput.nextLine().trim();
             
-            if(option.equals("5")) {
+            if(option.equals("4")) {
             	System.out.println("Fetching peer details!!!");
             	System.out.println("Peer ID is :- " + Integer.toString(peerId));
             	System.out.println("Peer Address is :- " + peerIP);
             	System.out.println("Listening port of the peer :- " + Integer.toString(port));
             	
             }
-            else if(option.equals("2")) {
+            else if(option.equals("1")) {
     			try {
 					csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
 				} catch (NumberFormatException e) {
@@ -76,7 +78,7 @@ public class PeerCli  {
             	System.out.println("RESPONSE: " + response);
 
             }
-            else if(option.equals("3")) {
+            else if(option.equals("2")) {
     			try {
 					csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
 				} catch (NumberFormatException e) {
@@ -100,13 +102,13 @@ public class PeerCli  {
             	System.out.println("RESPONSE: " + response);
 
             }
-            else if(option.equals("4")) {
+            else if(option.equals("3")) {
             	System.out.println();
             	System.out.println("Please enter the File Name :- ");
             	System.out.println();
-            	Scanner userInput4 = new Scanner(System.in);
-                String option4 = "";
-                option4 = userInput4.nextLine().trim();
+            	Scanner userInput3 = new Scanner(System.in);
+                String option3 = "";
+                option3 = userInput3.nextLine().trim();
     			try {
 					csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
 				} catch (NumberFormatException e) {
@@ -120,7 +122,7 @@ public class PeerCli  {
     			JSONObject reqObj = new JSONObject();
     			reqObj.put("Authorization",configMap.get("authToken"));
     			reqObj.put("Operation", "GetFileLocations");
-    			reqObj.put("FileName", option4);
+    			reqObj.put("FileName", option3);
     			
             	SendMessage sm = new SendMessage();
 				String messageStr = reqObj.toString();
