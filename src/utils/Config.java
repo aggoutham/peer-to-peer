@@ -47,6 +47,7 @@ public class Config {
 			result.put("peerListeningPort", prop.getProperty("peerListeningPort"));
 			result.put("centralIP", prop.getProperty("centralIP"));
 			result.put("centralPort", prop.getProperty("centralPort"));
+			result.put("data_directory", prop.getProperty("data_directory") );
 			
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);

@@ -1,7 +1,9 @@
 package peer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import message.RegisterPeer;
 import process.Client;
@@ -43,6 +45,26 @@ public class StartPeer {
 		peerProcess.port = Integer.parseInt(configMap.get("peerListeningPort"));
 		
 		
+		//Before Registering, populate all the files you have in Peer Class
+		PopulateFiles pfu = new PopulateFiles(peerProcess.p,configMap);
+		pfu.populate();
+		
+//		System.out.println("Filenames");
+//		for(int i=0; i<peerProcess.p.getFilenames().size(); i++) {
+//			System.out.println(peerProcess.p.getFilenames().get(i));
+//			
+//		}
+//		System.out.println("FileChunks");
+//		HashMap <String, ArrayList<Integer>> fileChunks = new HashMap <String, ArrayList<Integer>>();
+//		fileChunks = peerProcess.p.getFilechunks();
+//		for (Entry<String, ArrayList<Integer>> ee : fileChunks.entrySet()) {
+//			String key = ee.getKey();
+//			System.out.println(key);
+//		    ArrayList<Integer> values = ee.getValue();
+//		    for(int i=0; i<values.size(); i++) {
+//		    	System.out.println(values.get(i));
+//		    }
+//		}
 		
 		//Before Starting, first register with Central Server.
 		RegisterPeer r = new RegisterPeer(peerProcess.p,configMap);

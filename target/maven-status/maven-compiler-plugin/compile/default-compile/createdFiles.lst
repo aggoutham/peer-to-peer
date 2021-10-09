@@ -1,11 +1,12 @@
 message/SendMessage.class
 centralServer/StartCentral.class
 peer/Peer.class
-peer/PeerCli.class
+peer/PopulateFiles.class
 process/Client.class
-peer/StartPeer.class
 message/RegisterPeer.class
 process/Server.class
-centralServer/ServerListener.class
 centralServer/Healthcheck.class
+peer/PeerCli.class
+peer/StartPeer.class
+centralServer/ServerListener.class
 utils/Config.class

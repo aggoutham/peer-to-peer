@@ -10,7 +10,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,12 +54,26 @@ public class RegisterPeer {
 			messageObj.put("peerID", peerID);
 			messageObj.put("peerIP", peerIP);
 			
+			
+			JSONObject fileObj = new JSONObject();
+			
+			HashMap <String, ArrayList<Integer>> fileChunks = new HashMap <String, ArrayList<Integer>>();
+			fileChunks = p.getFilechunks();
+			for (Entry<String, ArrayList<Integer>> ee : fileChunks.entrySet()) {
+				String key = ee.getKey();
+			    ArrayList<Integer> values = ee.getValue();
+			    fileObj.put(key, values);
+			}
+			
+			messageObj.put("fileObject", fileObj);
+			
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
 		messageStr = messageObj.toString();
-		System.out.println("REQUEST: " + messageStr);
+//		System.out.println("REQUEST: " + messageStr);
 		
 		try {
 			csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));

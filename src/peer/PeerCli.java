@@ -30,16 +30,16 @@ public class PeerCli  {
 	
 	
 	public void enableInputs() {
+		System.out.println("####Welcome to Peer Interactive Shell####");
+        System.out.println("Choose from the following options :- ");
+        
+        System.out.println("1. Register yourself with server");
+        System.out.println("2. List the peers you have");
+        System.out.println("3. List all the files in the distributed system");
+        System.out.println("4. Find a particular file's location");
+        System.out.println("5. Details of THIS peer \n");
 		 
 		while(true) {
-			System.out.println("####Welcome to Peer Interactive Shell####");
-            System.out.println("Choose from the following options :- ");
-            
-            System.out.println("1. Register yourself with server");
-            System.out.println("2. List the peers you have");
-            System.out.println("3. List all the files in the distributed system");
-            System.out.println("4. Find a particular file's location");
-            System.out.println("5. Details of THIS peer \n");
             
             Scanner userInput = new Scanner(System.in);
             String option = "";
@@ -66,6 +66,61 @@ public class PeerCli  {
     			JSONObject reqObj = new JSONObject();
     			reqObj.put("Authorization",configMap.get("authToken"));
     			reqObj.put("Operation", "GetPeers");
+    			
+            	SendMessage sm = new SendMessage();
+				String messageStr = reqObj.toString();
+				System.out.println("REQUEST: " + messageStr);
+				byte[] message = messageStr.getBytes();
+				
+            	String response = sm.sendReq(csSocket, message);
+            	System.out.println("RESPONSE: " + response);
+
+            }
+            else if(option.equals("3")) {
+    			try {
+					csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    			
+    			JSONObject reqObj = new JSONObject();
+    			reqObj.put("Authorization",configMap.get("authToken"));
+    			reqObj.put("Operation", "GetFiles");
+    			
+            	SendMessage sm = new SendMessage();
+				String messageStr = reqObj.toString();
+				System.out.println("REQUEST: " + messageStr);
+				byte[] message = messageStr.getBytes();
+				
+            	String response = sm.sendReq(csSocket, message);
+            	System.out.println("RESPONSE: " + response);
+
+            }
+            else if(option.equals("4")) {
+            	System.out.println();
+            	System.out.println("Please enter the File Name :- ");
+            	System.out.println();
+            	Scanner userInput4 = new Scanner(System.in);
+                String option4 = "";
+                option4 = userInput4.nextLine().trim();
+    			try {
+					csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    			
+    			JSONObject reqObj = new JSONObject();
+    			reqObj.put("Authorization",configMap.get("authToken"));
+    			reqObj.put("Operation", "GetFileLocations");
+    			reqObj.put("FileName", option4);
     			
             	SendMessage sm = new SendMessage();
 				String messageStr = reqObj.toString();

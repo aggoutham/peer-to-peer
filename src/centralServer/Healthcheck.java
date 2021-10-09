@@ -27,7 +27,7 @@ public class Healthcheck extends Thread{
 			while(true) {
 				ArrayList<String> badNodes = new ArrayList<String> ();
 				Thread.sleep(2000);
-				System.out.println("HEALTHCHECK THREAD: Running regular Healthcheck...");
+//				System.out.println("HEALTHCHECK THREAD: Running regular Healthcheck...");
 				for (String key: registeredPeers.keySet()) {
 				    Peer value = registeredPeers.get(key);
 //				    System.out.println("HEALTHCHECK THREAD: " + key + " " + value.getIP() + ":" + Integer.toString(value.getPort()) );

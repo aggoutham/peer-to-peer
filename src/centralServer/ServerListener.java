@@ -6,8 +6,11 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import peer.Peer;
@@ -18,6 +21,10 @@ public class ServerListener extends Thread {
 	private Socket socket;
 	private HashMap<String,String> configMap;
 	private HashMap<String,Peer> registeredPeers;
+	
+	private ArrayList<String> fileNames = new ArrayList<String> ();
+	private JSONObject filePeers = new JSONObject();
+	
 	
 	public ServerListener(int listenPort, HashMap <String,String> configMap, HashMap<String,Peer> rp) {
 		this.listenPort = listenPort;
@@ -77,10 +84,15 @@ public class ServerListener extends Thread {
 					int peerID = Integer.parseInt(mObj.getString("peerID")); 
 					String peerIP = new String(mObj.getString("peerIP"));
 					int peerPort = Integer.parseInt(mObj.getString("peerPort"));
+					JSONObject fileObj = new JSONObject();
+					fileObj = mObj.getJSONObject("fileObject");
+					
 					Peer np = new Peer();
 					np.setId(peerID);
 					np.setIP(peerIP);
 					np.setPort(peerPort);
+					
+					processRegister(fileObj,np);
 					
 					registeredPeers.put(mObj.getString("peerID"), np);
 					respond = "Added the peer in my data structure successfully";
@@ -94,6 +106,25 @@ public class ServerListener extends Thread {
 					}
 					return resObj.toString();	
 				}
+				else if(operation.equals("GetFiles")) {
+					JSONObject f = new JSONObject();
+					JSONArray fArr = new JSONArray();
+					for(int i=0; i<fileNames.size(); i++) {
+						fArr.put(fileNames.get(i));
+					}
+					f.put("FileNames", fArr);
+					return f.toString();
+				}
+				else if(operation.equals("GetFileLocations")) {
+					String fName = mObj.getString("FileName");
+					fName = fName.replace(".dat", "");
+					System.out.println(fName);
+					
+					if(filePeers.has(fName)) {
+						return filePeers.getJSONObject(fName).toString();
+					}
+					return "File does not exist in the system";
+				}
 				else {
 					return "Invalid Operation. Please Check the request object and try again";
 				}
@@ -106,5 +137,62 @@ public class ServerListener extends Thread {
 		return respond;
 		
 	}
+	
+	private void processRegister(JSONObject fileObj, Peer p) {
+		
+		ArrayList<String> filenames = new ArrayList<String> ();
+		HashMap<String, Integer> filesizes = new HashMap<String,Integer> ();
+		HashMap<String, ArrayList<Integer> > filechunks = new HashMap<String,ArrayList<Integer> > ();
+		
+		String pId = Integer.toString(p.getId());
+		int peerID = p.getId();
+		String pKey = p.getIP() + ":" + Integer.toString(p.getPort());
+		
+		Iterator<String> keys = fileObj.keys();
+		while(keys.hasNext()) {
+			String key = keys.next();
+			if(!fileNames.contains(key + ".dat")) {
+				fileNames.add(key + ".dat");
+			}
+			
+			ArrayList<Integer> cNums = new ArrayList<Integer> ();
+			JSONArray jArray = (JSONArray)fileObj.get(key); 
+			if (jArray != null) { 
+			   for (int i=0;i<jArray.length();i++){ 
+			    cNums.add(jArray.getInt(i));
+			   } 
+			} 
+//			cNums = (ArrayList<Integer>) fileObj.get(key);
+			
+			if(!filePeers.has(key)) {
+				JSONObject temp = new JSONObject ();
+				filePeers.put(key, temp);
+			}
+			filePeers.getJSONObject(key).put(pKey, cNums);
+			
+			
+			filenames.add(key);
+			filechunks.put(key, cNums);
+			String[] parts = key.split("_S");
+			int size = Integer.parseInt(parts[1]);
+			filesizes.put(key,size);
+		}
+		p.setFilechunks(filechunks);
+		p.setFilenames(filenames);
+		p.setFileSizes(filesizes);
+//		System.out.println(filePeers.toString());
+	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
