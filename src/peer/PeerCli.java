@@ -144,13 +144,16 @@ public class PeerCli  {
             	Scanner userInput5 = new Scanner(System.in);
                 String option5 = "";
                 option5 = userInput5.nextLine().trim();
-                
-                FileAlgorithm fa = new FileAlgorithm(p,configMap);
-                
-                String status = "";
-                status  = fa.downloadFile(option5);
-                System.out.println("RESPONSE: " + status);
 
+                String status = "Unable to download File. Maybe it doesnt exist ?";
+                try {
+                    FileAlgorithm fa = new FileAlgorithm(p,configMap);
+                    status  = fa.downloadFile(option5);
+//                    System.out.println("RESPONSE: " + status);
+                } catch(Exception e) {
+                	System.out.println(e);
+                }
+                System.out.println("RESPONSE: " + status);
             }
 
         	System.out.println("");

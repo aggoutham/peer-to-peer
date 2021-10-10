@@ -21,7 +21,7 @@ public class FileAlgorithm {
 	private HashMap<String,String> configMap;
 	private Socket fasocket;
 	
-	private ArrayList<Integer> rarestWise = new ArrayList<Integer>();
+//	private ArrayList<Integer> rarestWise = new ArrayList<Integer>();
 	
 	public FileAlgorithm(Peer temp, HashMap<String,String> configMap) {
 		this.p = temp;	
@@ -33,7 +33,7 @@ public class FileAlgorithm {
 	//MOST IMPORTANT//
 	//MAIN ALGORITHM OF DOWNLOAD//
 	public String downloadFile(String filename) {
-		String status = "";
+		String status = "File Successfully Downloaded";
 		String myOwnKey = p.getIP() + ":" + Integer.toString(p.getPort());
 		
 		
@@ -46,8 +46,7 @@ public class FileAlgorithm {
 		catch(Exception e) {
 			System.out.println(e);
 		}
-		
-		System.out.println(fileLocations.toString());
+//		System.out.println(fileLocations.toString());
 		
 		//File name is something like F101_S05.dat
 		//get the size (5) from that filename
@@ -57,34 +56,50 @@ public class FileAlgorithm {
 		num = Integer.parseInt(s);
 		
 		JSONObject chunkTable = new JSONObject();
-		
+		JSONObject distinctPeers = new JSONObject();
 		for(int k=0; k<num; k++) {
 			JSONArray ks = new JSONArray();
 			chunkTable.put(Integer.toString(k), ks);
 		}
-		
 		Iterator<String> keys = fileLocations.keys();
 		while(keys.hasNext()) {
 			String key = keys.next();
+
+			if(key.equals(myOwnKey)) {
+				continue;
+			}
+			
+			if(!distinctPeers.has(key)) {
+				distinctPeers.put(key, 0);
+			}
 			JSONArray jArray = (JSONArray)fileLocations.get(key); 
 			for(int i=0;i<jArray.length();i++) {
 				String cnum = Integer.toString(jArray.getInt(i));
-//				if(!chunkTable.has(cnum)){
-//					JSONArray cs = new JSONArray();
-//					chunkTable.put(cnum, cs);
-//				}
 				chunkTable.getJSONArray(cnum).put(key);
 			}
 		}
-		
-		System.out.println(chunkTable.toString());
-		
-		
-		
-		
-		
-		
+//		System.out.println(chunkTable.toString());
+//		System.out.println(distinctPeers.toString());
+		JSONArray chunkProgress = new JSONArray();
+		keys = chunkTable.keys();
+		while(keys.hasNext()) {
+			String cid = keys.next();
+			int freq = chunkTable.getJSONArray(cid).length();
+			JSONObject progressObject = new JSONObject();
+			progressObject.put("cID", cid);
+			progressObject.put("frequency", freq);
+			progressObject.put("status", 0);
+			chunkProgress.put(progressObject);
+		}
+//		System.out.println(chunkProgress.toString());
+				
 
+		System.out.println("===========================");
+		System.out.println(fileLocations.toString());
+		System.out.println(distinctPeers.toString()); //sorted the own key problem
+		System.out.println(chunkTable.toString()); //sorted the own key problem
+		System.out.println(chunkProgress.toString()); //sorted the own key problem
+		System.out.println("===========================");
 		
 		
 		
