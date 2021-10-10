@@ -11,6 +11,7 @@ import java.util.Scanner;
 import org.json.JSONObject;
 
 import downloads.DownloadChunk;
+import downloads.FileAlgorithm;
 import message.SendMessage;
 
 public class PeerCli  {
@@ -20,12 +21,14 @@ public class PeerCli  {
 	private String peerIP;
 	private HashMap<String,String> configMap;
 	private Socket csSocket;
+	private Peer p;
 	
 	public PeerCli(Peer p, HashMap <String,String> configMap){
 		this.port = p.getPort();
 		this.peerId = p.getId();
 		this.peerIP = p.getIP();
 		this.configMap = configMap;
+		this.p = p;
 		
 	}
 	
@@ -135,8 +138,18 @@ public class PeerCli  {
 
             }
             else if(option.equals("5")) {
-            	DownloadChunk dc = new DownloadChunk();
-            	dc.beginDownload("", "");
+            	System.out.println();
+            	System.out.println("Please enter the File Name you want to download:- ");
+            	System.out.println();
+            	Scanner userInput5 = new Scanner(System.in);
+                String option5 = "";
+                option5 = userInput5.nextLine().trim();
+                
+                FileAlgorithm fa = new FileAlgorithm(p,configMap);
+                
+                String status = "";
+                status  = fa.downloadFile(option5);
+                System.out.println("RESPONSE: " + status);
 
             }
 
@@ -161,13 +174,6 @@ public class PeerCli  {
 	}
 
 	
-	public ArrayList<String> getAllFiles(){
-		
-		ArrayList<String> filenames = new ArrayList<String>();
-		
-		
-		return filenames;
-		
-	}
+	
 
 }

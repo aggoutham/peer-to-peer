@@ -60,13 +60,9 @@ public class Server extends Thread{
 //			System.out.println("Peer Printed message");
 			
 			String respond = processMessage(str);
-			System.out.println("Created new string for response");
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-
-			System.out.println("Opened output stream");
 			out.writeObject(respond.getBytes());
-
-			System.out.println("Sent the file");
+//			Thread.sleep(5000);
 		} 
 
 		catch (Exception e) {
@@ -108,6 +104,7 @@ public class Server extends Thread{
 					bis.read(mybytearray,0,mybytearray.length);
 					String responseFile = new String(mybytearray,StandardCharsets.UTF_8);
 					bis.close();
+					fis.close();
 					System.out.println("Created new string for response");
 					
 					return responseFile;

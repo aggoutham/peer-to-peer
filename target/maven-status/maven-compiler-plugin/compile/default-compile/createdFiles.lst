@@ -3,6 +3,7 @@ centralServer/StartCentral.class
 peer/Peer.class
 peer/PopulateFiles.class
 downloads/DownloadChunk.class
+downloads/FileAlgorithm.class
 process/Client.class
 message/RegisterPeer.class
 process/Server.class

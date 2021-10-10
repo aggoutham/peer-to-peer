@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -164,6 +165,7 @@ public class ServerListener extends Thread {
 			} 
 //			cNums = (ArrayList<Integer>) fileObj.get(key);
 			
+			Collections.sort(cNums);
 			if(!filePeers.has(key)) {
 				JSONObject temp = new JSONObject ();
 				filePeers.put(key, temp);

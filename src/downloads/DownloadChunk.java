@@ -1,9 +1,14 @@
 package downloads;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
 import message.SendMessage;
@@ -13,13 +18,12 @@ public class DownloadChunk {
 	
 	//write a method
 	
-	public void beginDownload(String dummyC, String dummyCN) {
+	public void beginDownload(String destIP, int destPort, HashMap <String,String> configMap, String fileFolder, String chunkName) {
 		try {
-			Socket c = new Socket("130.203.16.22",17001);
-			String chunkName = "chunk_F101_01";
-			String fileFolder = "F101_S05";
+			Socket c = new Socket(destIP,destPort);
 			
-			
+//			String chunkName = "chunk_F101_01";
+//			String fileFolder = "F101_S05";
 			
 			//make a JSONObject
 			//put Authorization
@@ -28,7 +32,7 @@ public class DownloadChunk {
 			//send filefolder and chunkname
 			
 			JSONObject reqObj = new JSONObject();
-			reqObj.put("Authorization","@@AGPeerAuthHeaderAG@@");
+			reqObj.put("Authorization",configMap.get("authToken"));
 			reqObj.put("Operation", "DownloadChunk");
 			reqObj.put("FileFolder", fileFolder);
 			reqObj.put("FileChunk", chunkName);
@@ -39,13 +43,36 @@ public class DownloadChunk {
 			byte[] message = messageStr.getBytes();
 			
 			String response = sm.sendReq(c, message);
+        	System.out.println("RESPONSE: Received Chunk");
         	System.out.println("RESPONSE: " + response);
+        	
+        	String data_directory = configMap.get("data_directory");
+        	File dataDir = new File(data_directory);
+    		File[] listOfFileFolders = dataDir.listFiles();
+    		
+    		int check = 0;
+    		for (int i = 0; i < listOfFileFolders.length; i++) {
+    			String folder = listOfFileFolders[i].getName();
+    			if(folder.equals(fileFolder)){
+    				check = 1;
+    				break;
+    			}
+    		}
+    		if(check==0) {
+    			new File(data_directory + fileFolder + "/").mkdirs();
+    		}
+    		String fd = data_directory + fileFolder + "/" + chunkName;
+    		
+//    		PrintWriter out = new PrintWriter(fd);
+//    		out.print(response);
+//        	out.close();
+    		
+    		FileUtils.writeStringToFile(new File(fd), response ,StandardCharsets.UTF_8);
+    		
+        	System.out.println("Saved chunk in my data directory");
+        	
 			//Trigger the call here
-			
         	//SAVE RESPONSE AS FILE
-			
-			
-			
 			// End of call
 			
 		} catch (Exception e) {

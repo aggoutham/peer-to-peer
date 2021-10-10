@@ -2,6 +2,7 @@ package peer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class PopulateFiles {
@@ -45,7 +46,7 @@ public class PopulateFiles {
 					chunks.add(chunkNumber);
 				}
 			}
-
+			Collections.sort(chunks);
 			fileChunks.put(fileFolder, chunks);
 		}
 		
