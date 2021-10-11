@@ -71,6 +71,8 @@ public class DownloadChunk {
     		
         	System.out.println("Saved chunk in my data directory");
         	
+        	callReRegisterPeer(configMap,fileFolder, chunkName);
+        	
 			//Trigger the call here
         	//SAVE RESPONSE AS FILE
 			// End of call
@@ -79,6 +81,41 @@ public class DownloadChunk {
 			System.out.println(e);
 		} 
 		
+	}
+	
+	public void callReRegisterPeer(HashMap<String, String> configMap, String filename, String chunkname) {
+		
+		String authToken = configMap.get("authToken");
+		String serverIP = configMap.get("centralIP");
+		String serverPort = configMap.get("centralPort");
+		String peerID = configMap.get("peerID");
+		String peerIP = configMap.get("peerIP");
+		String peerPort = configMap.get("peerListeningPort");
+		
+		try {
+			Socket c = new Socket(serverIP,Integer.parseInt(serverPort));
+			JSONObject reqObj = new JSONObject();
+			reqObj.put("Authorization",authToken);
+			reqObj.put("Operation", "BecomeChunkSource");
+			reqObj.put("peerID",peerID);
+			reqObj.put("peerIP",peerIP);
+			reqObj.put("peerPort",peerPort);
+			reqObj.put("filename",filename);
+			reqObj.put("chunkname",chunkname);
+			
+			SendMessage sm = new SendMessage();
+			String messageStr = reqObj.toString();
+			System.out.println("REQUEST: " + messageStr);
+			byte[] message = messageStr.getBytes();
+			String response = sm.sendReq(c, message);
+        	System.out.println("RESPONSE: Peer has become the chunk's source");
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		} 
+		
+		
+		return;
 	}
 
 }

@@ -159,7 +159,7 @@ public class FileAlgorithm {
 	    for(int i = 0; i < chunkProgress.length(); i++) {
 	    	list.add(chunkProgress.getJSONObject(i));
 	    }
-	    System.out.println("Before Sorted JSONArray: " + chunkProgress);
+//	    System.out.println("Before Sorted JSONArray: " + chunkProgress);
 	    
 	    java.util.Collections.sort(list, new Comparator<JSONObject>() {
 	    	@Override

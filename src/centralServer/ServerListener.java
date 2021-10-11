@@ -126,6 +126,16 @@ public class ServerListener extends Thread {
 					}
 					return "File does not exist in the system";
 				}
+				else if(operation.equals("BecomeChunkSource")) {
+					int pID = Integer.parseInt(mObj.getString("peerID")); 
+					String pIP = new String(mObj.getString("peerIP"));
+					int pPort = Integer.parseInt(mObj.getString("peerPort"));
+					String fname = new String(mObj.getString("filename"));
+					String cname = new String(mObj.getString("chunkname"));
+					reregisterPeer(pID,pIP,pPort,fname,cname);
+					return "New Chunk Added into Peer's data";
+					
+				}
 				else {
 					return "Invalid Operation. Please Check the request object and try again";
 				}
@@ -187,7 +197,50 @@ public class ServerListener extends Thread {
 
 	
 	
-	
+	public void reregisterPeer(int peerID, String peerIP, int peerPort, String filename, String chunkname) {
+
+		int cn = Integer.parseInt(chunkname.split("_")[2]);
+		String myOwnKey = peerIP + ":" + Integer.toString(peerPort);
+		String pKey = Integer.toString(peerID);
+		Peer pnew = registeredPeers.get(pKey);
+		
+		ArrayList<String> filenames = pnew.getFilenames();
+		HashMap<String,Integer> fileSizes = pnew.getFileSizes(); 
+		HashMap< String, ArrayList<Integer> > filechunks = pnew.getFilechunks();
+		
+		if(!filenames.contains(filename)) {
+			filenames.add(filename);
+			pnew.setFilenames(filenames);
+		}
+		
+		if(!fileSizes.containsKey(filename)) {
+			String[] parts = filename.split("_S");
+			int size = Integer.parseInt(parts[1]);
+			fileSizes.put(filename, size);
+			pnew.setFileSizes(fileSizes);
+		}
+		
+		if(!filechunks.containsKey(filename)) {
+			ArrayList<Integer> cNums = new ArrayList<Integer> ();
+			filechunks.put(filename, cNums);
+		}
+		ArrayList<Integer> chunkNumbers = filechunks.get(filename);
+		chunkNumbers.add(cn);
+		Collections.sort(chunkNumbers);
+		filechunks.put(filename, chunkNumbers);
+		pnew.setFilechunks(filechunks);
+		
+		JSONObject fpeers = new JSONObject();
+		fpeers = filePeers.getJSONObject(filename);
+		if(!fpeers.has(myOwnKey)) {
+			JSONArray fcnums = new JSONArray();
+			fpeers.put(myOwnKey,fcnums);
+		}
+		fpeers.getJSONArray(myOwnKey).put(cn);
+		
+		
+		return;
+	}
 	
 	
 	
