@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONObject;
+
 import peer.Peer;
 import utils.Config;
 
@@ -11,7 +13,8 @@ public class StartCentral {
 	private int serverPort;
 	private ArrayList<Peer> peerList;
 	private static HashMap<String,Peer> registeredPeers = new HashMap<String,Peer> ();
-	
+	private static ArrayList<String> fileNames = new ArrayList<String> ();
+	private static JSONObject filePeers = new JSONObject();
 	
 	
 	public static void main(String[] args)  {
@@ -41,11 +44,11 @@ public class StartCentral {
 		
 		//Spawn the Listener Thread
 		centralServer.serverPort = Integer.parseInt(configMap.get("centralPort"));
-		ServerListener cs = new ServerListener(centralServer.serverPort, configMap, registeredPeers);
+		ServerListener cs = new ServerListener(centralServer.serverPort, configMap, registeredPeers,fileNames,filePeers);
 		cs.start();
 		
 		//Spawn the Healthcheck Thread
-		Healthcheck hc = new Healthcheck(registeredPeers,configMap);
+		Healthcheck hc = new Healthcheck(registeredPeers,configMap,fileNames,filePeers);
 		hc.start();
 		
 			

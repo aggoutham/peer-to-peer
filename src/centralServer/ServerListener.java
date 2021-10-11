@@ -23,14 +23,16 @@ public class ServerListener extends Thread {
 	private HashMap<String,String> configMap;
 	private HashMap<String,Peer> registeredPeers;
 	
-	private ArrayList<String> fileNames = new ArrayList<String> ();
-	private JSONObject filePeers = new JSONObject();
+	private ArrayList<String> fileNames;
+	private JSONObject filePeers;
 	
 	
-	public ServerListener(int listenPort, HashMap <String,String> configMap, HashMap<String,Peer> rp) {
+	public ServerListener(int listenPort, HashMap <String,String> configMap, HashMap<String,Peer> rp, ArrayList<String> fns, JSONObject fps) {
 		this.listenPort = listenPort;
 		this.configMap = configMap;
 		this.registeredPeers = rp;
+		this.fileNames = fns;
+		this.filePeers = fps;
 	}
 	
 	

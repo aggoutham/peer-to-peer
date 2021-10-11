@@ -15,10 +15,14 @@ public class Healthcheck extends Thread{
 
 	private HashMap<String,Peer> registeredPeers;
 	private HashMap<String,String> configMap;
+	private ArrayList<String> fileNames;
+	private JSONObject filePeers;
 	
-	public Healthcheck(HashMap<String,Peer> rp, HashMap<String,String> configMap) {
+	public Healthcheck(HashMap<String,Peer> rp, HashMap<String,String> configMap, ArrayList<String> fns, JSONObject fps) {
 		this.registeredPeers = rp;
 		this.configMap = configMap;
+		this.fileNames = fns;
+		this.filePeers = fps;
 	}
 	
 	@Override
