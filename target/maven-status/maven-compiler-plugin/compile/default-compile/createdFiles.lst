@@ -5,10 +5,13 @@ peer/PopulateFiles.class
 downloads/DownloadChunk.class
 downloads/FileAlgorithm.class
 process/Client.class
+downloads/IndividualThread.class
 message/RegisterPeer.class
 process/Server.class
 centralServer/Healthcheck.class
 peer/PeerCli.class
+downloads/FileAlgorithm$1.class
 peer/StartPeer.class
 centralServer/ServerListener.class
+downloads/MultiThreading.class
 utils/Config.class

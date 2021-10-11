@@ -44,7 +44,7 @@ public class DownloadChunk {
 			
 			String response = sm.sendReq(c, message);
         	System.out.println("RESPONSE: Received Chunk");
-        	System.out.println("RESPONSE: " + response);
+//        	System.out.println("RESPONSE: " + response);
         	
         	String data_directory = configMap.get("data_directory");
         	File dataDir = new File(data_directory);

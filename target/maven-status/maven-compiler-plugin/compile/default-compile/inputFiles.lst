@@ -1,5 +1,7 @@
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/centralServer/StartCentral.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/peer/Peer.java
+/Users/aggoutham/eclipse-workspace/peer-to-peer/src/downloads/IndividualThread.java
+/Users/aggoutham/eclipse-workspace/peer-to-peer/src/downloads/MultiThreading.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/peer/StartPeer.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/message/RegisterPeer.java
 /Users/aggoutham/eclipse-workspace/peer-to-peer/src/utils/Config.java
