@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import message.SendMessage;
@@ -64,7 +66,7 @@ public class Healthcheck extends Thread{
 				}
 				
 				for(int i = 0; i<badNodes.size() ; i++) {
-					registeredPeers.remove(badNodes.get(i));
+					processRemove(badNodes.get(i));
 				}
 			}
 			
@@ -74,5 +76,55 @@ public class Healthcheck extends Thread{
 		}
 		
 	}
+
+	public void processRemove(String pid) {
+		
+		String pIP = registeredPeers.get(pid).getIP();
+		String pPort = Integer.toString(registeredPeers.get(pid).getPort());
+		String myOwnKey = pIP +":"+ pPort;
+		
+		registeredPeers.remove(pid);
+		
+		ArrayList<String> deletedFiles = new ArrayList<String>();
+		
+		Iterator<String> keys = filePeers.keys();
+		while(keys.hasNext()) {
+			String key = keys.next();
+			
+			JSONObject jArr = new JSONObject();
+			jArr = filePeers.getJSONObject(key);
+			if(jArr.has(myOwnKey)) {
+				jArr.remove(myOwnKey);
+				
+				if(jArr.length()==0) {
+					deletedFiles.add(key);
+				}
+			}
+			filePeers.put(key, jArr);
+		}
+		
+		for(int i=0;i<deletedFiles.size();i++) {
+			
+			if(filePeers.has(deletedFiles.get(i))) {
+				filePeers.remove(deletedFiles.get(i));
+			}
+			
+			if(fileNames.contains(deletedFiles.get(i) + ".dat")) {
+				fileNames.remove(deletedFiles.get(i) + ".dat");
+			}
+			
+		}
+		
+		return;
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
