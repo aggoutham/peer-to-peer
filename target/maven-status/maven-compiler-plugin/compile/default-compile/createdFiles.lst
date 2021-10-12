@@ -4,7 +4,6 @@ peer/Peer.class
 peer/PopulateFiles.class
 downloads/DownloadChunk.class
 downloads/FileAlgorithm.class
-process/Client.class
 downloads/IndividualThread.class
 message/RegisterPeer.class
 process/Server.class
