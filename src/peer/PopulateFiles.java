@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+/*During the initial registration of a PEER, this class is invoked to load the names of all 
+ *files present in the "data_directory" of the Peer's FILE SYSTEM.
+ *
+ *These files are then used to register the PEER with the central Server.
+ *
+ *"data_directory" is obtained in the config.properties file which is in-turn loaded by a Config.java class.
+ * */
 public class PopulateFiles {
 	
 	private Peer p;
@@ -15,6 +22,8 @@ public class PopulateFiles {
 		this.configMap = configMap;
 	}
 	
+	//Populate all the names of files the PEER is going to share in the system.
+	//Populates chunk ids of each chunk within a file too.
 	public int populate() {
 		int status = 0;
 		System.out.println("Populating peer object with existing files");
@@ -40,7 +49,6 @@ public class PopulateFiles {
 			File fileDir = new File(listOfFileFolders[i].getAbsolutePath() + "/");
 			File[] listOfChunks = fileDir.listFiles();
 			for(int j = 0; j<listOfChunks.length; j++) {
-//				System.out.println(listOfChunks[j]);
 				if(listOfChunks[j].getName().contains("chunk")) {
 					int chunkNumber = Integer.parseInt(listOfChunks[j].getName().split("_")[2]);
 					chunks.add(chunkNumber);

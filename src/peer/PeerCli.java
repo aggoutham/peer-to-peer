@@ -3,17 +3,25 @@ package peer;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
-
 import org.json.JSONObject;
-
-import downloads.DownloadChunk;
 import downloads.FileAlgorithm;
 import message.SendMessage;
 
+/*This class starts a new thread that gives an Interactive Mode for the user using a peer.
+ *The user is expected to give inputs and receive outputs in the standard Input/Output terminal.
+ *The peer CLI lets user run multiple options on the peer as many times as he/she likes before exiting the thread.
+ *
+ *The options provided are :-
+ *1. List all peers in system
+ *2. List all files in system
+ *3. List locations of a particular file
+ *4. Details of the current peer.
+ *5. Start download of a new file.
+ *
+ *For each option the PeerCli class invokes a set of peer functionalities.
+ * */
 public class PeerCli  {
 	
 	private int port;
@@ -32,12 +40,13 @@ public class PeerCli  {
 		
 	}
 	
+	//This method begins the interactive session and runs in a while loop until a user wants to exit.
+	//The user may provide his/her interested options back-to-back and try out the peer features.
 	
 	public void enableInputs() {
 		System.out.println("####Welcome to Peer Interactive Shell####");
         System.out.println("Choose from the following options :- ");
         
-//        System.out.println("1. Register yourself with server");
         System.out.println("1. List the peers you have");
         System.out.println("2. List all the files in the distributed system");
         System.out.println("3. Find a particular file's location");

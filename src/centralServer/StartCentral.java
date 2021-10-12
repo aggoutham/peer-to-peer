@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import peer.Peer;
 import utils.Config;
 
-/*This class is the initiator of the java process for the central server.
+/*This class is the initiator of the java process for the central server. (includes a main function)
  *It is responsible for creating 2 high level threads :- ServerListener and Healthcheck.
  *It maintains the central servers UNIQUE DATA STRUCTURES in a STATIC way - registeredPeers,fileNames,filePeers.
  * */

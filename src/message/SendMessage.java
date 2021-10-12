@@ -6,8 +6,16 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+/*This class is the lowest level ONE-STOP solution for sending requests.
+ *Every other utility trying to make communication with the outside world would use this class.
+ *
+ *The sendReq method simply takes a destination socket, a request message byte array as input.
+ *Once it receives a response from a fellow peer or central Server, it returns the String back.
+ * */
+
 public class SendMessage {
 	
+	//Utility to send requests and recieve responses used throughout the project.
 	public String sendReq(Socket socket, byte[] message){
 		String response = "FAILURE";
 		try {
@@ -22,12 +30,6 @@ public class SendMessage {
 			String str = new String(resp, StandardCharsets.UTF_8);
 			return str;
 		} 
-//		catch (IOException e) {
-//			System.err.println(e);
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
 		catch (Exception e) {
 			System.out.println(e);
 		}

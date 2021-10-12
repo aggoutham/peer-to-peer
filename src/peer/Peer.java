@@ -1,8 +1,10 @@
 package peer;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//The Data Structure Object for one Peer.
+//Stores all LIVE information of every peer.
+//New Peers are just instances of this class.
 public class Peer {
 	
 	private int id;
@@ -59,19 +61,6 @@ public class Peer {
 	public void setTimeoutCount(int timeoutCount) {
 		this.timeoutCount = timeoutCount;
 	}
-	
-	
-	
-	
-//	private Socket socket;
-	
-//	public Socket getSocket() {
-//		return socket;
-//	}
-//	
-//	public void setSocket(Socket socket) {
-//		this.socket = socket;
-//	}
 	
 
 }

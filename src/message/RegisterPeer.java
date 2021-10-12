@@ -17,6 +17,10 @@ import java.util.Map.Entry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/*This class is invoked once the Peer first starts. It Registers the peer with central Server.
+ *It communicates the details of the peer and the list of File/chunks it contains to the central Server.
+ *Peer Main thread cannot propagate until Registration is successful. 
+ * */
 public class RegisterPeer {
 	
 	private Peer p;
@@ -29,6 +33,8 @@ public class RegisterPeer {
 		
 	}
 	
+	//Method that invokes central sever with all of the peer's details and list of file chunks.
+	//It creates a file object that lists all files and chunks for which this peer wants to become a source of.
 	public int register() {
 		System.out.println("Registering this peer with the Central Server");
 		int status = 0;
@@ -37,12 +43,6 @@ public class RegisterPeer {
 		peerID = configMap.get("peerID");
 		peerIP = configMap.get("peerIP");
 		authToken = configMap.get("authToken");
-		
-//		System.out.println(peerPort);
-//		System.out.println(peerID);
-//		System.out.println(peerIP);
-//		System.out.println(authToken);
-		
 		
 		String messageStr = "";
 		JSONObject messageObj = new JSONObject();
@@ -73,7 +73,6 @@ public class RegisterPeer {
 		}
 		
 		messageStr = messageObj.toString();
-//		System.out.println("REQUEST: " + messageStr);
 		
 		try {
 			csSocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
@@ -92,7 +91,6 @@ public class RegisterPeer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

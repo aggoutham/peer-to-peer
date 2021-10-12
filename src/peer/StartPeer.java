@@ -1,19 +1,19 @@
 package peer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import message.RegisterPeer;
-import process.Client;
 import process.Server;
 import utils.Config;
 
+/*This class is the initiator of the java process for the PEER. (includes a main function)
+ *It is responsible for creating 2 high level threads :- Server and PeerCli(based on user input).
+ *
+ *This is where Peer Registration, Peer process and Peer Interactive Shell are invoked together.
+ * */
 public class StartPeer {
 
-	
-	
 	private int port;
 	private int peerId;
 	private Peer p = new Peer();
@@ -49,30 +49,12 @@ public class StartPeer {
 		PopulateFiles pfu = new PopulateFiles(peerProcess.p,configMap);
 		pfu.populate();
 		
-//		System.out.println("Filenames");
-//		for(int i=0; i<peerProcess.p.getFilenames().size(); i++) {
-//			System.out.println(peerProcess.p.getFilenames().get(i));
-//			
-//		}
-//		System.out.println("FileChunks");
-//		HashMap <String, ArrayList<Integer>> fileChunks = new HashMap <String, ArrayList<Integer>>();
-//		fileChunks = peerProcess.p.getFilechunks();
-//		for (Entry<String, ArrayList<Integer>> ee : fileChunks.entrySet()) {
-//			String key = ee.getKey();
-//			System.out.println(key);
-//		    ArrayList<Integer> values = ee.getValue();
-//		    for(int i=0; i<values.size(); i++) {
-//		    	System.out.println(values.get(i));
-//		    }
-//		}
 		
 		//Before Starting, first register with Central Server.
 		RegisterPeer r = new RegisterPeer(peerProcess.p,configMap);
 		r.register();
 		
-		
-		
-		//peer will also become a listener entity in the background
+		//Peer will also become a listener entity in the background
 		Server ps = new Server(peerProcess.port,peerProcess.peerId,peerProcess.p,configMap);
 		ps.start();
 		try {
@@ -80,10 +62,6 @@ public class StartPeer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
 		
 		//Start the peer's interative terminal is argument 1 is passed.
 		peerProcess.p.setId(peerProcess.peerId);
@@ -94,12 +72,6 @@ public class StartPeer {
 			PeerCli cli = new PeerCli(peerProcess.p,configMap);
 			cli.enableInputs();
 		}
-		
-		
-		
-		
-		
-		
 		
 		System.out.println("Main Thread has Completed its Execution");
 		return;

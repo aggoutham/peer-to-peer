@@ -14,6 +14,10 @@ import org.json.JSONObject;
 
 import peer.Peer;
 
+/*This is the main thread which the PEER listens to on its port eg:- 17001.
+ *The run method contains a continuous while loop where the PEER expects requests 
+ *in its InputStream.
+ * */
 public class Server extends Thread{
 	
 	private int listenPort;
@@ -29,14 +33,13 @@ public class Server extends Thread{
 		this.configMap = configMap;
 	}
 	
-	
+	//This method runs in a while loop to server all messages that come to the peer's input stream
 	@Override
 	public void run() {
 		System.out.println("Starting Peer Process...");
 		System.out.println("Peer ID is :- " + myPeer_ID);
 		System.out.println("Listening on Port :- " + listenPort);
 		try {
-//			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			ServerSocket listener = new ServerSocket(listenPort);
 			while(true) {
 				socket = listener.accept();
@@ -48,6 +51,8 @@ public class Server extends Thread{
 		
 	}
 	
+	//Once there is a message in the socket, this method will invoke its processing.
+	//Similarly, this method is responsible for sending back a valid Response to client.
 	private byte[] receiveMessage() {
 		
 		byte[] message = null;
@@ -67,6 +72,10 @@ public class Server extends Thread{
 		return message;
 	}
 	
+	//Peer supports only 2 operations
+	//1. Healthcheck - we respond to the central server that we are alive
+	//2. DownloadChunk - we upload chunks to whoever is requesting for it
+	//This method handles the processing of all messages for the above two operations.
 	private String processMessage(String messageStr) {
 		String respond = "Failed";
 		try {
@@ -74,12 +83,13 @@ public class Server extends Thread{
 			String operation = mObj.getString("Operation");
 			String authToken = mObj.getString("Authorization");
 			if(authToken.equals(configMap.get("authToken"))) {
-				//Simulating Authentication
+				//Respond to a Healthcheck from central Server
 				if(operation.equals("Healthcheck")){
 					JSONObject resObj = new JSONObject();
 					resObj.put("status", "1");
 					return resObj.toString();
 				}
+				//Upload Chunk
 				else if(operation.equals("DownloadChunk")) {
 					System.out.println("\nSome peer has requested for chunk :-");
 					//Send the chunk to the peer who is requesting
@@ -88,7 +98,6 @@ public class Server extends Thread{
 					
 					System.out.println(fileFolder + " " + fileChunk);
 					//SEND CHUNK IF YOU HAVE
-					
 					String data_directory = configMap.get("data_directory");
 					File chunk = new File(data_directory + fileFolder + "/" + fileChunk);
 					byte [] mybytearray = new byte[(int)chunk.length()];
@@ -101,8 +110,6 @@ public class Server extends Thread{
 					fis.close();
 					
 					return responseFile;
-					//
-					
 				}
 				else {
 					return "Invalid Operation. Please Check the request object and try again";
