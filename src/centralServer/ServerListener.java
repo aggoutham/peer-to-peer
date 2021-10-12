@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import peer.Peer;
 
+/*This is the main thread which the centralServer listens to on its port eg:- 17777.
+ *The run method contains a continuous while loop where the server expects requests 
+ *in its InputStream.
+ * */
 public class ServerListener extends Thread {
 	
 	private int listenPort;
@@ -35,7 +37,7 @@ public class ServerListener extends Thread {
 		this.filePeers = fps;
 	}
 	
-	
+	//This is the main listener run method for the central Server.
 	@Override
 	public void run() {
 		System.out.println("Starting Central Server...");
@@ -53,6 +55,7 @@ public class ServerListener extends Thread {
 		
 	}
 	
+	//Once there is some request in the InputStream, all messages are processed in this single method.
 	private byte[] receiveMessage() {
 		
 		byte[] message = null;
@@ -75,6 +78,7 @@ public class ServerListener extends Thread {
 		return message;
 	}
 	
+	//Each message will have a key called "Operation". Based on that the centralServer responds differently.
 	private String processMessage(String messageStr) {
 		String respond = "Nothing to process";
 		try {
@@ -82,7 +86,7 @@ public class ServerListener extends Thread {
 			String operation = mObj.getString("Operation");
 			String authToken = mObj.getString("Authorization");
 			if(authToken.equals(configMap.get("authToken"))) {
-				//Simulating Authentication
+				//Register Operation
 				if(operation.equals("Register")){
 					int peerID = Integer.parseInt(mObj.getString("peerID")); 
 					String peerIP = new String(mObj.getString("peerIP"));
@@ -101,6 +105,7 @@ public class ServerListener extends Thread {
 					respond = "Added the peer in my data structure successfully";
 					return respond;
 				}
+				//Getting all peers information Operation.
 				else if(operation.equals("GetPeers")) {
 					JSONObject resObj = new JSONObject();
 					for (String key: registeredPeers.keySet()) {
@@ -109,6 +114,7 @@ public class ServerListener extends Thread {
 					}
 					return resObj.toString();	
 				}
+				//Getting all files in the system Operation.
 				else if(operation.equals("GetFiles")) {
 					JSONObject f = new JSONObject();
 					JSONArray fArr = new JSONArray();
@@ -118,6 +124,7 @@ public class ServerListener extends Thread {
 					f.put("FileNames", fArr);
 					return f.toString();
 				}
+				//Getting locations of a file Operation.
 				else if(operation.equals("GetFileLocations")) {
 					String fName = mObj.getString("FileName");
 					fName = fName.replace(".dat", "");
@@ -128,6 +135,7 @@ public class ServerListener extends Thread {
 					}
 					return "File does not exist in the system";
 				}
+				//When a peer tries to become source of its newly downloaded chunk.
 				else if(operation.equals("BecomeChunkSource")) {
 					int pID = Integer.parseInt(mObj.getString("peerID")); 
 					String pIP = new String(mObj.getString("peerIP"));
@@ -138,6 +146,7 @@ public class ServerListener extends Thread {
 					return "New Chunk Added into Peer's data";
 					
 				}
+				//If Operation doesn't match any of the above, then return Invalid.
 				else {
 					return "Invalid Operation. Please Check the request object and try again";
 				}
@@ -151,6 +160,7 @@ public class ServerListener extends Thread {
 		
 	}
 	
+	//Registering a new peer, adding all its data into the server's unique data structures.
 	private void processRegister(JSONObject fileObj, Peer p) {
 		
 		ArrayList<String> filenames = new ArrayList<String> ();
@@ -175,7 +185,6 @@ public class ServerListener extends Thread {
 			    cNums.add(jArray.getInt(i));
 			   } 
 			} 
-//			cNums = (ArrayList<Integer>) fileObj.get(key);
 			
 			Collections.sort(cNums);
 			if(!filePeers.has(key)) {
@@ -194,11 +203,11 @@ public class ServerListener extends Thread {
 		p.setFilechunks(filechunks);
 		p.setFilenames(filenames);
 		p.setFileSizes(filesizes);
-//		System.out.println(filePeers.toString());
 	}
 
 	
-	
+	//When a peer downloads a new chunk, it becomes a source for that chunk now.
+	//This method will handle that request from peer :- "Become new source for chunk"
 	public void reregisterPeer(int peerID, String peerIP, int peerPort, String filename, String chunkname) {
 
 		int cn = Integer.parseInt(chunkname.split("_")[2]);

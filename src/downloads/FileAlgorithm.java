@@ -2,19 +2,16 @@ package downloads;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,8 +24,11 @@ import org.json.JSONObject;
 
 import message.SendMessage;
 import peer.Peer;
-import peer.PeerCli;
 
+/*This class helps in the download orchestration of a given file "filename"
+ *It invokes parallel downloading of chunks using multi threading principles.
+ *It contains the static data structures that the algorithm maintains for coordinating chunk downloads.
+ * */
 public class FileAlgorithm {
 
 	
@@ -48,9 +48,11 @@ public class FileAlgorithm {
 		
 	}
 	
-	
 	//MOST IMPORTANT//
 	//MAIN ALGORITHM OF DOWNLOAD//
+	//Given a file the user wants to download, this method is the prime controller for creating
+	//all the necessary static data structures to coordinate the downloads of individual chunks
+	//in a parallel and most efficient way.
 	public String downloadFile(String filename) {
 		String status = "File Successfully Downloaded";
 		String myOwnKey = p.getIP() + ":" + Integer.toString(p.getPort());
@@ -66,7 +68,6 @@ public class FileAlgorithm {
 			System.out.println(e);
 		}
 		fileLocations.remove(myOwnKey);
-//		System.out.println(fileLocations.toString());
 		
 		//File name is something like F101_S05.dat
 		//get the size (5) from that filename
@@ -125,7 +126,8 @@ public class FileAlgorithm {
 		return status;
 	}
 	
-	
+	//Method invokes MultiThreading in a while loop until all chunks are successfully downloaded.
+	//Actual invokation of multiple threads for download happens here.
 	public void runParallelDownloading(String filename) {
 		
 		int allWentFine = 0;
@@ -154,40 +156,13 @@ public class FileAlgorithm {
 		return;
 	}
 	
-	
+	//Once all the chunks are downloaded successfully,
+	//This method aggregates all the chunks into One Original File.
+	//Returns a 0 or 1 status
 	public int deSplicer(String filename) {
 		int status = 0;
 		String dir = configMap.get("data_directory") + filename.replace(".dat", "") + "/";
 		String chunkReg = "chunk_" + filename.split("_")[0] + "_";
-		
-//		ProcessBuilder processBuilder = new ProcessBuilder();
-//		String command = "cat " + dir+chunkReg + " > " + dir+filename;
-//		System.out.println(command);
-//		try {
-//			Process process = Runtime.getRuntime().exec(command);
-//			StringBuilder output = new StringBuilder();
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//			String line;
-//			while ((line = reader.readLine()) != null) {
-//				output.append(line + "\n");
-//			}
-//
-//			int exitVal = process.waitFor();
-//			if (exitVal == 0) {
-//				System.out.println("DeSpliced all Chunks Successfully!");
-//				return 1;
-//			} else {
-//				//abnormal...
-//				System.out.println(output);
-//				System.out.println("DeSplicing was unsuccessful!");
-//				return 0;
-//				
-//			}
-//		} catch (IOException e) {
-//			System.out.println(e);
-//		} catch (InterruptedException e) {
-//			System.out.println(e);
-//		}
 
 		int num = 0;
 		String s = filename.replace(".dat", "");
@@ -195,6 +170,7 @@ public class FileAlgorithm {
 		num = Integer.parseInt(s);
 		
 		File dest = new File(dir+filename);
+		File dest1 = new File("./" + filename);
 		File[] sources = new File[num];
 		
 		
@@ -210,6 +186,7 @@ public class FileAlgorithm {
 		
 		try {
 			joinFiles(dest,sources);
+			joinFiles(dest1,sources);
 			return 1;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -219,10 +196,9 @@ public class FileAlgorithm {
 		return status;
 		
 	}
+
 	
-	
-	
-	
+	//Helper function to call Central server to ask information about a given file.
 	public String getFileLocations(String fileName){
 		try {
 			fasocket = new Socket(configMap.get("centralIP"),Integer.parseInt(configMap.get("centralPort")));
@@ -248,6 +224,7 @@ public class FileAlgorithm {
 		
 	}
 	
+	//Helper function to sort JSONArrays using a custom key.
 	@SuppressWarnings("unchecked")
 	public void chunkProgressSort() {
 		JSONArray sortedJsonArray = new JSONArray();
@@ -288,6 +265,7 @@ public class FileAlgorithm {
 	    chunkProgress = sortedJsonArray;
 	}
 	
+	//Helper function to join multiple files into a single file
 	public static void joinFiles(File destination, File[] sources)
             throws IOException {
         OutputStream output = null;
@@ -300,11 +278,12 @@ public class FileAlgorithm {
             IOUtils.closeQuietly(output);
         }
     }
+	//Helper function to join multiple files into a single file
 	private static BufferedOutputStream createAppendableStream(File destination)
             throws FileNotFoundException {
         return new BufferedOutputStream(new FileOutputStream(destination, true));
     }
-
+	//Helper function to join multiple files into a single file
     private static void appendFile(OutputStream output, File source)
             throws IOException {
         InputStream input = null;

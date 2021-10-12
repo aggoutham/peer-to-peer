@@ -6,6 +6,15 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/*Since we cannot invoke as many threads as we need because of the limitations of computer systems,
+ *the parallel downloading happens in order of 8 threads exactly.
+ *
+ *This class invokes sets of 8 threads in a loop to cover the downloads of all chunks requested.
+ *
+ *The main thread here waits for ALL threads to come back with responses to further continue the algorithm.
+ *Thread.join() is used for this implementation
+ * */
+
 public class MultiThreading {
 	
 	private static JSONObject fileLocations;
@@ -25,6 +34,7 @@ public class MultiThreading {
 		this.configMap = cm;
 	}
 	
+	//This method actually begins the parallel downloading by invoking 8 threads at a time.
 	public String startThreads() {
 		String status = "Success";
 		
@@ -61,7 +71,6 @@ public class MultiThreading {
 					activeThreads.get(a).join();
 					
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

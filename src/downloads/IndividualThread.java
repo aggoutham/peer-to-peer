@@ -5,6 +5,13 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/*This class implements Runnable and operates as a separate thread to download a given chunk.
+ *It is called by MultiThreading.java which coordinates the downloads of parallel threads.
+ *Given a chunk name and all the static Data Structures of File Download Algorithm, this individual thread
+ *calls DownloadChunk.java and handles responses from other peers.
+ *
+ *An explicit one second delay is added at the very end after the chunk download to help in our demo.
+ * */
 public class IndividualThread implements Runnable {
 	
 	private String chunkName;

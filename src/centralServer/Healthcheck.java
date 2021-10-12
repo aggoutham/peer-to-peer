@@ -1,20 +1,21 @@
 package centralServer;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import message.SendMessage;
 import peer.Peer;
 
+/*The central server starts this thread in background to keep a check of all peers in the system.
+The healthcheck "run" function runs once every 2 secs and tries to ping all peers.
+If any peer doesn't not respond for 3 consecutive times, then it removes it from some data structures.
+Since the hashmaps and JSONObjects mentioned in this class are actually static copies of StartCentral,
+any deletes here would affect the same data structures throughout the server.*/
 public class Healthcheck extends Thread{
 	
-
 	private HashMap<String,Peer> registeredPeers;
 	private HashMap<String,String> configMap;
 	private ArrayList<String> fileNames;
@@ -27,6 +28,7 @@ public class Healthcheck extends Thread{
 		this.filePeers = fps;
 	}
 	
+	//Run while loop every 2 seconds and kick badNodes out of the system.
 	@Override
 	public void run() {
 		try {
@@ -77,6 +79,7 @@ public class Healthcheck extends Thread{
 		
 	}
 
+	//For each peer "pid" that is unresponsive, this method will remove its dependencies from all data structures.
 	public void processRemove(String pid) {
 		
 		String pIP = registeredPeers.get(pid).getIP();

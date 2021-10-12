@@ -1,10 +1,7 @@
 package downloads;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -13,11 +10,15 @@ import org.json.JSONObject;
 
 import message.SendMessage;
 
+/*This class is the lowest level operator which actually performs the "DOWNLOAD" call to other peers.
+ *We provide the exact FileName, ChunkName, DestinationIP, DestinationPort
+ *This class downloads the chunk into the current peer's file system. 
+ *Status 0 or 1 is returned based on the output of download.
+ * */
+
 public class DownloadChunk {
 	
-	
-	//write a method
-	
+	//This method performs the actual download and returns a 0 or 1 status.
 	public int beginDownload(String destIP, int destPort, HashMap <String,String> configMap, String fileFolder, String chunkName) {
 		try {
 			Socket c = new Socket(destIP,destPort);
@@ -68,11 +69,6 @@ public class DownloadChunk {
     		
         	System.out.println("Saved chunk in my data directory");
         	callReRegisterPeer(configMap,fileFolder, chunkName);
-        	
-        	
-			//Trigger the call here
-        	//SAVE RESPONSE AS FILE
-			// End of call
         	return 1;
 			
 		} catch (Exception e) {
@@ -82,6 +78,8 @@ public class DownloadChunk {
 		
 	}
 	
+	//It is important to call the server once the peer downloads a new chunk.
+	//This method calls "centralServer" asking to register this chunk for the current peer as new source.
 	public void callReRegisterPeer(HashMap<String, String> configMap, String filename, String chunkname) {
 		
 		String authToken = configMap.get("authToken");

@@ -4,12 +4,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
-//import java.io.*;
-//import java.util.Properties;
 import java.util.Properties;
 
+/*This class is a ONE-STOP SOLUTION for reading configuration for the entire system.
+ *First it looks for an environment variable "P2P_PATH"
+ *
+ *If the env variable is present, it looks for a file "config.properties" in that PATH.
+ *If found, this file will DICTATE the properties of the entire system.
+ *
+ *Else, if the env variable is NULL, then by default we use "config.properties" in resources folder in our code base.
+ * */
 public class Config {
 	HashMap<String, String> result = new HashMap<>();
 	InputStream inputStream;
@@ -23,6 +28,7 @@ public class Config {
 			Properties prop = new Properties();
 			String propFileName = "config.properties";
 			
+			//If P2P_PATH environment variable exists, then use that as the directory to find properties file.
 			if(ptopdirectory != null) {
 				try {
 				    prop.load(new FileInputStream(ptopdirectory + "/config.properties"));
@@ -30,6 +36,7 @@ public class Config {
 				    e.printStackTrace();
 				}
 			}
+			//ELSE use default config.properties in our code base.
 			else {
 				inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
 				if (inputStream != null) {
@@ -40,7 +47,6 @@ public class Config {
 				}
 			}
 			
-//			Date time = new Date(System.currentTimeMillis());
 			result.put("peerID", prop.getProperty("peerID"));
 			result.put("authToken", prop.getProperty("authToken"));
 			result.put("peerIP", prop.getProperty("peerIP"));
