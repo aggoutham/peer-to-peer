@@ -54,26 +54,21 @@ public class Server extends Thread{
 		try {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			message = (byte[]) in.readObject();
-//			System.out.println("Peer Received message");
 			String str = new String(message, StandardCharsets.UTF_8);
-//			System.out.println(str);
-//			System.out.println("Peer Printed message");
 			
 			String respond = processMessage(str);
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 			out.writeObject(respond.getBytes());
-//			Thread.sleep(5000);
 		} 
 
 		catch (Exception e) {
 			System.out.println("Some Invalid Message has come");
-//			System.exit(0);
 		}
 		return message;
 	}
 	
 	private String processMessage(String messageStr) {
-		String respond = "Nothing to process";
+		String respond = "Failed";
 		try {
 			JSONObject mObj = new JSONObject(messageStr);
 			String operation = mObj.getString("Operation");
@@ -86,7 +81,7 @@ public class Server extends Thread{
 					return resObj.toString();
 				}
 				else if(operation.equals("DownloadChunk")) {
-					System.out.println("Some peer requested for chunk :-");
+					System.out.println("\nSome peer has requested for chunk :-");
 					//Send the chunk to the peer who is requesting
 					String fileFolder = mObj.getString("FileFolder");
 					String fileChunk = mObj.getString("FileChunk");
@@ -100,12 +95,10 @@ public class Server extends Thread{
 					FileInputStream fis = new FileInputStream(chunk);
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					
-					System.out.println("Created new buffer input stream");
 					bis.read(mybytearray,0,mybytearray.length);
 					String responseFile = new String(mybytearray,StandardCharsets.UTF_8);
 					bis.close();
 					fis.close();
-					System.out.println("Created new string for response");
 					
 					return responseFile;
 					//

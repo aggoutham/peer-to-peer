@@ -49,7 +49,7 @@ public class MultiThreading {
 					chunkName = "0" + chunkName;
 				}
 				String fullChunkName = "chunk" + "_" + filename.split("_S")[0] + "_" + chunkName;
-	            Thread object = new Thread(new IndividualThread(fullChunkName,arrPeers,distinctPeers,filename,configMap));
+	            Thread object = new Thread(new IndividualThread(fullChunkName,arrPeers,distinctPeers,filename,configMap,chunkProgress));
 	            
 	            activeThreads.add(object);
 	            

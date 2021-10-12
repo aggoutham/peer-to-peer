@@ -18,13 +18,11 @@ public class DownloadChunk {
 	
 	//write a method
 	
-	public void beginDownload(String destIP, int destPort, HashMap <String,String> configMap, String fileFolder, String chunkName) {
+	public int beginDownload(String destIP, int destPort, HashMap <String,String> configMap, String fileFolder, String chunkName) {
 		try {
 			Socket c = new Socket(destIP,destPort);
-			
-//			String chunkName = "chunk_F101_01";
-//			String fileFolder = "F101_S05";
-			
+ 			//String chunkName = "chunk_F101_01";
+			//String fileFolder = "F101_S05";
 			//make a JSONObject
 			//put Authorization
 			//put AuthToken
@@ -39,12 +37,16 @@ public class DownloadChunk {
 			
 			SendMessage sm = new SendMessage();
 			String messageStr = reqObj.toString();
-			System.out.println("REQUEST: " + messageStr);
+			System.out.println("\nREQUEST: " + messageStr);
 			byte[] message = messageStr.getBytes();
 			
 			String response = sm.sendReq(c, message);
-        	System.out.println("RESPONSE: Received Chunk");
-//        	System.out.println("RESPONSE: " + response);
+			if(response.equals("Failed") || response.equals("FAILURE")){
+				System.out.println("\nRESPONSE: Chunk Download Failed " + chunkName + ". We may retry!!!");
+				return 0;
+			}
+			
+        	System.out.println("\nRESPONSE: Received Chunk " + chunkName);
         	
         	String data_directory = configMap.get("data_directory");
         	File dataDir = new File(data_directory);
@@ -62,23 +64,20 @@ public class DownloadChunk {
     			new File(data_directory + fileFolder + "/").mkdirs();
     		}
     		String fd = data_directory + fileFolder + "/" + chunkName;
-    		
-//    		PrintWriter out = new PrintWriter(fd);
-//    		out.print(response);
-//        	out.close();
-    		
     		FileUtils.writeStringToFile(new File(fd), response ,StandardCharsets.UTF_8);
     		
         	System.out.println("Saved chunk in my data directory");
-        	
         	callReRegisterPeer(configMap,fileFolder, chunkName);
+        	
         	
 			//Trigger the call here
         	//SAVE RESPONSE AS FILE
 			// End of call
+        	return 1;
 			
 		} catch (Exception e) {
-			System.out.println(e);
+//			System.out.println(e);
+			return 0;
 		} 
 		
 	}

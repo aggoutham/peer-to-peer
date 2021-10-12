@@ -120,8 +120,21 @@ public class FileAlgorithm {
 	
 	public void runParallelDownloading(String filename) {
 		
-		MultiThreading m = new MultiThreading(fileLocations,chunkTable,distinctPeers,chunkProgress,filename,configMap);
-		m.startThreads();
+		while(true) {
+			MultiThreading m = new MultiThreading(fileLocations,chunkTable,distinctPeers,chunkProgress,filename,configMap);
+			m.startThreads();
+			JSONArray remainingChunks = new JSONArray();
+			for (int i=0;i<chunkProgress.length(); i++) {
+				if(chunkProgress.getJSONObject(i).getInt("status") == 0) {
+					remainingChunks.put(chunkProgress.getJSONObject(i));
+				}
+			}
+			chunkProgress = remainingChunks;
+			
+			if(remainingChunks.length() == 0) {
+				break;
+			}
+		}
 		return;
 	}
 	

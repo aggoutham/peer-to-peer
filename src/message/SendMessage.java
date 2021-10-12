@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class SendMessage {
 	
 	public String sendReq(Socket socket, byte[] message){
-		String response = "";
+		String response = "FAILURE";
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 			out.writeObject(message);
