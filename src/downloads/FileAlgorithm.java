@@ -1,6 +1,16 @@
 package downloads;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -10,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,8 +98,6 @@ public class FileAlgorithm {
 				chunkTable.getJSONArray(cnum).put(key);
 			}
 		}
-//		System.out.println(chunkTable.toString());
-//		System.out.println(distinctPeers.toString());
 		chunkProgress = new JSONArray();
 		keys = chunkTable.keys();
 		while(keys.hasNext()) {
@@ -100,16 +109,15 @@ public class FileAlgorithm {
 			progressObject.put("status", 0);
 			chunkProgress.put(progressObject);
 		}
-//		System.out.println(chunkProgress.toString());
 		
 		//SORT the ChunkProgress Array
 		chunkProgressSort();
 				
 		System.out.println("===========================");
-		System.out.println(fileLocations.toString()); //sorted the own key problem
-		System.out.println(distinctPeers.toString()); //sorted the own key problem
-		System.out.println(chunkTable.toString()); //sorted the own key problem
-		System.out.println(chunkProgress.toString()); //sorted the own key problem
+		System.out.println(fileLocations.toString());
+		System.out.println(distinctPeers.toString());
+		System.out.println(chunkTable.toString());
+		System.out.println(chunkProgress.toString());
 		System.out.println("===========================");
 		
 		runParallelDownloading(filename);
@@ -119,6 +127,8 @@ public class FileAlgorithm {
 	
 	
 	public void runParallelDownloading(String filename) {
+		
+		int allWentFine = 0;
 		
 		while(true) {
 			MultiThreading m = new MultiThreading(fileLocations,chunkTable,distinctPeers,chunkProgress,filename,configMap);
@@ -132,11 +142,86 @@ public class FileAlgorithm {
 			chunkProgress = remainingChunks;
 			
 			if(remainingChunks.length() == 0) {
+				allWentFine = 1;
 				break;
 			}
 		}
+		
+		if(allWentFine == 1) {
+			deSplicer(filename);
+		}
+		
 		return;
 	}
+	
+	
+	public int deSplicer(String filename) {
+		int status = 0;
+		String dir = configMap.get("data_directory") + filename.replace(".dat", "") + "/";
+		String chunkReg = "chunk_" + filename.split("_")[0] + "_";
+		
+//		ProcessBuilder processBuilder = new ProcessBuilder();
+//		String command = "cat " + dir+chunkReg + " > " + dir+filename;
+//		System.out.println(command);
+//		try {
+//			Process process = Runtime.getRuntime().exec(command);
+//			StringBuilder output = new StringBuilder();
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//			String line;
+//			while ((line = reader.readLine()) != null) {
+//				output.append(line + "\n");
+//			}
+//
+//			int exitVal = process.waitFor();
+//			if (exitVal == 0) {
+//				System.out.println("DeSpliced all Chunks Successfully!");
+//				return 1;
+//			} else {
+//				//abnormal...
+//				System.out.println(output);
+//				System.out.println("DeSplicing was unsuccessful!");
+//				return 0;
+//				
+//			}
+//		} catch (IOException e) {
+//			System.out.println(e);
+//		} catch (InterruptedException e) {
+//			System.out.println(e);
+//		}
+
+		int num = 0;
+		String s = filename.replace(".dat", "");
+		s = s.split("_S")[1];
+		num = Integer.parseInt(s);
+		
+		File dest = new File(dir+filename);
+		File[] sources = new File[num];
+		
+		
+		for(int i=0; i<num; i++) {
+			String ap = "";
+			if(i<10) {
+				ap = "0";
+			}
+			ap = ap + Integer.toString(i);
+			File tmp = new File(dir + chunkReg + ap);
+			sources[i] = tmp;
+		}
+		
+		try {
+			joinFiles(dest,sources);
+			return 1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e);
+		}
+		
+		return status;
+		
+	}
+	
+	
+	
 	
 	public String getFileLocations(String fileName){
 		try {
@@ -203,6 +288,32 @@ public class FileAlgorithm {
 	    chunkProgress = sortedJsonArray;
 	}
 	
-	
+	public static void joinFiles(File destination, File[] sources)
+            throws IOException {
+        OutputStream output = null;
+        try {
+            output = createAppendableStream(destination);
+            for (File source : sources) {
+                appendFile(output, source);
+            }
+        } finally {
+            IOUtils.closeQuietly(output);
+        }
+    }
+	private static BufferedOutputStream createAppendableStream(File destination)
+            throws FileNotFoundException {
+        return new BufferedOutputStream(new FileOutputStream(destination, true));
+    }
+
+    private static void appendFile(OutputStream output, File source)
+            throws IOException {
+        InputStream input = null;
+        try {
+            input = new BufferedInputStream(new FileInputStream(source));
+            IOUtils.copy(input, output);
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+    }
 	
 }
