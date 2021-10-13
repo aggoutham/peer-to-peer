@@ -33,6 +33,7 @@ java -cp peer-to-peer-0.0.1-SNAPSHOT-jar-with-dependencies.jar peer.StartPeer 2
 java -cp peer-to-peer-0.0.1-SNAPSHOT-jar-with-dependencies.jar peer.StartPeer 1
 
 Now the system is initiated with central server running on one host (host1) and peers running on 4 hosts (host2, host3, host4 and host5).
+
 #######################
 
 
@@ -48,6 +49,7 @@ Following is the explanation to each parameter in the config.properties file -
 5. data_directory - The directory in the peer's File System where all the shared Files and its chunks are stored. Irrelevant for central server.
 6. centralIP - The central server's public address. Every peer needs to know this to call server.
 7. centralPort - The central server's listening port. Every peer needs to know this to call server. The central server begins listening on this port.
+
 #######################
 
 
@@ -62,6 +64,7 @@ However, this is not a limitation to the functionality of the sharing system, an
 3. F101 is the name of the file the peer wanted to share. S50 would mean that the total size of the file in 50MB.
 4. Within each directory "F101_S50/" we create a "F101_S50.dat" file that is a randomly generated 50MB file.
 5. Split the file into chunks of 1MB with the name "chunk_F101_00, chunk_F101_01, chunk_F101_02 ....."
+
 #######################
 
 
