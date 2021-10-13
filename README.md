@@ -4,6 +4,7 @@ github :- https://github.com/aggoutham/peer-to-peer.git
 ##Demo Videos are provided in the "demo" folder within the code.
 
 #######################
+
 Steps to instantiate the distributed system :-
 
 1. Clone the git repository "peer-to-peer" or unzip the source code file "peer-to-peer.zip"
@@ -38,6 +39,7 @@ Now the system is initiated with central server running on one host (host1) and 
 
 
 #######################
+
 Configuration File :-
 
 Following is the explanation to each parameter in the config.properties file -
@@ -54,6 +56,7 @@ Following is the explanation to each parameter in the config.properties file -
 
 
 #######################
+
 Data Directory - Initiating random files and chunks :-
 
 We followed a specific directory structure and naming convention of Files/Chunks in the distributed system to make demonstration simpler.
